@@ -65,7 +65,19 @@ Demandé : mettre des placeholders pour les assets manquants.
 - **WebKit indisponible** : libs système manquantes → mobile testé sous Chromium.
 - **Hook de formatage du repo** : `python3 .claude/hooks/post_tool_use_format.py` échoue avec un chemin relatif quand le cwd est `portfolio/`. C'est de la config du repo, sans impact sur les fichiers produits.
 
-## 7. À décider plus tard (en attente de ton background)
+## 7. Déploiement (Vercel)
+
+- **Plateforme** : Vercel, site statique (`vercel.json`, pas de build). Équipe `frontier-solutions`.
+- **Privé** : Vercel Authentication sur la **production** nécessite le plan **Pro** (payant) — indisponible en Hobby.
+  Contournement gratuit : on protège les **déploiements preview** (Standard Protection) et on utilise
+  l'URL de preview comme URL privée (HTTP 401 + login Vercel pour les non-membres).
+- **État actuel** :
+  - Preview **privé** (protégé) : `portfolio-qsayjt7ny-frontier-solutions.vercel.app` → 401 sauf si connecté.
+  - Production **publique** : `portfolio-ruby-seven-83.vercel.app` → 200.
+- **Limite** : les URLs de preview changent à chaque déploiement. Pour une URL privée **stable**, il faut
+  soit passer en **Pro** (protéger la prod), soit brancher le repo Git (URL de branche stable + protection).
+
+## 8. À décider plus tard (en attente de ton background)
 
 - Vrais nom / titre / bio / ville.
 - Vrais projets (titres, descriptions, liens, vraies captures).
