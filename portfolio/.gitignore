@@ -3,5 +3,6 @@ playwright-report/
 test-results/
 screenshots/
 previews/
+animations/out/
 .DS_Store
 .vercel

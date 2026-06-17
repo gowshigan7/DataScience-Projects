@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Animation scene</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    html, body { margin: 0; height: 100%; background: #0e0d0f; }
+    body { display: grid; place-items: center; }
+    canvas { width: min(96vw, 1120px); height: auto; border-radius: 14px; box-shadow: 0 30px 80px -30px #000; display: block; }
+  </style>
+</head>
+<body>
+  <canvas id="c"></canvas>
+  <script src="engine.js"></script>
+  <!-- scene registry (add the other 9 here as they are built) -->
+  <script src="scenes/01-latent-space.js"></script>
+  <script>
+    const id = new URLSearchParams(location.search).get('scene') || '01';
+    const a = window.Anim.mount(document.getElementById('c'), id);
+    // Exposed for the headless frame exporter:
+    window.__renderAt = (t) => a.renderAt(t);
+    window.__ready = true;
+    a.play();
+  </script>
+</body>
+</html>
