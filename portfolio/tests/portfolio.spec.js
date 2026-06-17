@@ -13,8 +13,10 @@ test.beforeEach(async ({ page }) => {
 
 test('page has correct title and hero', async ({ page }) => {
   await expect(page).toHaveTitle(/Gowshigan/);
-  await expect(page.locator('.hero__title')).toHaveText(/Gowshigan/);
-  await expect(page.getByRole('link', { name: 'View my work' })).toBeVisible();
+  await expect(page.locator('.hero__eyebrow')).toContainText('Gowshigan');
+  await expect(page.locator('.hero__title')).toContainText('AI');
+  await expect(page.getByRole('link', { name: 'See the work' })).toBeVisible();
+  await expect(page.locator('#latent')).toBeVisible();
 });
 
 test('all main sections are present', async ({ page }) => {
@@ -49,7 +51,7 @@ test('navigation anchors scroll to sections', async ({ page, isMobile }) => {
   if (isMobile) {
     await page.locator('#navToggle').click();
   }
-  await page.getByRole('link', { name: /Projects/ }).first().click();
+  await page.getByRole('link', { name: /Work/ }).first().click();
   await expect(page.locator('#projects')).toBeInViewport({ ratio: 0.05 });
 });
 

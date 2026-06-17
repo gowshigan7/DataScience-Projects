@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Preview variants: ?theme=midnight|paper|noir (default = latent). Set before paint. -->
+  <script>(function(){var t=new URLSearchParams(location.search).get('theme');if(t)document.documentElement.setAttribute('data-theme',t);})();</script>
   <title>Gowshigan Selladurai — AI Engineer &amp; Data Scientist</title>
   <meta name="description" content="Gowshigan Selladurai — AI Engineer & Data Scientist apprentice @ Cleva, based in Paris. Building LLM/RAG systems, ML models and data products. Using AI to build a better future." />
 
@@ -15,7 +17,7 @@
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles/main.css" />
 </head>
 <body>
@@ -34,10 +36,10 @@
       </a>
 
       <nav class="nav__links" aria-label="Primary">
-        <a href="#about"><span class="nav__num">01.</span> About</a>
-        <a href="#skills"><span class="nav__num">02.</span> Skills</a>
-        <a href="#projects"><span class="nav__num">03.</span> Projects</a>
-        <a href="#experience"><span class="nav__num">04.</span> Experience</a>
+        <a href="#about">About</a>
+        <a href="#skills">Skills</a>
+        <a href="#projects">Work</a>
+        <a href="#experience">Timeline</a>
         <a href="#contact" class="nav__cta">Contact</a>
       </nav>
 
@@ -49,36 +51,36 @@
 
   <main id="main">
     <!-- ===================== HERO ===================== -->
+    <!-- Signature: a "latent space" field — points settling into Gaussian
+         clusters (a nod to RAG embeddings + GMM-from-scratch). The page's one
+         bold, subject-grounded moment; everything else stays quiet. -->
     <section class="hero" id="hero">
+      <canvas class="hero__latent" id="latent" aria-hidden="true"></canvas>
       <div class="container hero__inner">
-        <p class="hero__eyebrow reveal">Hi, my name is</p>
-        <h1 class="hero__title reveal">Gowshigan Selladurai.</h1>
-        <h2 class="hero__subtitle reveal">I use AI to build a better future.</h2>
+        <p class="hero__eyebrow reveal"><span class="dot"></span>Gowshigan Selladurai — AI Engineer &amp; Data Scientist · Paris</p>
+        <h1 class="hero__title reveal">I build AI that reasons<br />over real-world data.</h1>
         <p class="hero__lead reveal">
-          I'm an <strong>AI Engineer &amp; Data Scientist</strong> apprentice at
-          <strong>Cleva</strong>, based in Paris. I build <strong>LLM / RAG systems</strong>,
-          machine-learning models and data products — from raw data all the way
-          to something people can actually use.
+          Apprentice at <strong>Cleva</strong>, finishing an <strong>MSc in Distributed
+          Systems &amp; Data Science</strong>. I work on <strong>LLM / RAG systems</strong>,
+          machine-learning models — sometimes from scratch — and the pipelines that
+          carry them to production.
         </p>
         <div class="hero__actions reveal">
-          <a href="#projects" class="btn btn--primary">View my work</a>
-          <a href="assets/resume.pdf" class="btn btn--ghost" download>Download CV</a>
+          <a href="#projects" class="btn btn--primary">See the work</a>
+          <a href="mailto:Gowshigan.Selladurai@gmail.com" class="btn btn--ghost">Get in touch</a>
         </div>
-        <ul class="hero__stats reveal" aria-label="Highlights">
-          <li><strong>1st</strong><span>Data For Good Hackathon 2026</span></li>
-          <li><strong>Finalist</strong><span>Pioneers AI Lab @ Station F</span></li>
-          <li><strong>MSc</strong><span>Data Science @ UPEC</span></li>
+        <ul class="hero__signal reveal" aria-label="Highlights">
+          <li><b>1st</b> Data For Good Hackathon 2026</li>
+          <li><b>Finalist</b> Pioneers AI Lab · Station F</li>
+          <li><b>MSc</b> Data Science · UPEC</li>
         </ul>
       </div>
-      <a href="#about" class="hero__scroll" aria-label="Scroll down">
-        <span></span>
-      </a>
     </section>
 
     <!-- ===================== ABOUT ===================== -->
     <section class="section" id="about">
       <div class="container">
-        <h2 class="section__title reveal"><span class="section__num">01.</span> About me</h2>
+        <h2 class="section__title reveal"><span class="section__num">// background</span> About me</h2>
         <div class="about reveal">
           <div class="about__text">
             <p>
@@ -119,7 +121,7 @@
     <!-- ===================== SKILLS ===================== -->
     <section class="section section--alt" id="skills">
       <div class="container">
-        <h2 class="section__title reveal"><span class="section__num">02.</span> What I do</h2>
+        <h2 class="section__title reveal"><span class="section__num">// capabilities</span> What I do</h2>
         <div class="cards">
           <article class="card reveal">
             <div class="card__icon">🤖</div>
@@ -146,7 +148,7 @@
     <!-- ===================== PROJECTS ===================== -->
     <section class="section" id="projects">
       <div class="container">
-        <h2 class="section__title reveal"><span class="section__num">03.</span> Featured projects</h2>
+        <h2 class="section__title reveal"><span class="section__num">// selected work</span> Featured projects</h2>
         <div class="projects">
 
           <article class="project reveal">
@@ -212,7 +214,7 @@
     <!-- ===================== EXPERIENCE ===================== -->
     <section class="section section--alt" id="experience">
       <div class="container">
-        <h2 class="section__title reveal"><span class="section__num">04.</span> Experience &amp; highlights</h2>
+        <h2 class="section__title reveal"><span class="section__num">// timeline</span> Experience &amp; highlights</h2>
         <ol class="timeline">
           <li class="timeline__item reveal">
             <div class="timeline__dot"></div>
@@ -267,6 +269,7 @@
     <p class="footer__credit">Designed &amp; built by Gowshigan Selladurai · Using AI to build a better future.</p>
   </footer>
 
+  <script src="scripts/latent.js" defer></script>
   <script src="scripts/main.js" defer></script>
 </body>
 </html>

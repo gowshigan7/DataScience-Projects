@@ -6,7 +6,8 @@
   "scripts": {
     "serve": "npx --yes http-server . -p 4173 -c-1 --silent",
     "test": "playwright test",
-    "shots": "node scripts/screenshot.mjs"
+    "shots": "node scripts/screenshot.mjs",
+    "previews": "node scripts/previews.mjs"
   },
   "devDependencies": {
     "@playwright/test": "^1.56.1",
