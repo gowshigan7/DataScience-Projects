@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gowshigan — Data Scientist &amp; ML Engineer</title>
+  <meta name="description" content="Portfolio of Gowshigan, Data Scientist & ML Engineer — building data products, ML pipelines and clean analytics." />
+
+  <!-- Open Graph / social preview (placeholder image) -->
+  <meta property="og:title" content="Gowshigan — Data Scientist & ML Engineer" />
+  <meta property="og:description" content="Building data products, ML pipelines and clean analytics." />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="assets/og-image.svg" />
+
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles/main.css" />
+</head>
+<body>
+  <!-- Skip link for accessibility -->
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <!-- Animated background glow -->
+  <div class="bg-glow" aria-hidden="true"></div>
+
+  <!-- ===================== NAV ===================== -->
+  <header class="nav" id="nav">
+    <div class="container nav__inner">
+      <a href="#hero" class="nav__logo" aria-label="Home">
+        <span class="nav__logo-mark">G</span>
+        <span class="nav__logo-text">Gowshigan</span>
+      </a>
+
+      <nav class="nav__links" aria-label="Primary">
+        <a href="#about"><span class="nav__num">01.</span> About</a>
+        <a href="#skills"><span class="nav__num">02.</span> Skills</a>
+        <a href="#projects"><span class="nav__num">03.</span> Projects</a>
+        <a href="#experience"><span class="nav__num">04.</span> Experience</a>
+        <a href="#contact" class="nav__cta">Contact</a>
+      </nav>
+
+      <button class="nav__toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <main id="main">
+    <!-- ===================== HERO ===================== -->
+    <section class="hero" id="hero">
+      <div class="container hero__inner">
+        <p class="hero__eyebrow reveal">Hi, my name is</p>
+        <h1 class="hero__title reveal">Gowshigan.</h1>
+        <h2 class="hero__subtitle reveal">I turn data into decisions.</h2>
+        <p class="hero__lead reveal">
+          I'm a <strong>Data Scientist &amp; ML Engineer</strong> who designs end-to-end
+          data products — from raw pipelines to production models and the dashboards
+          that make them useful. <em>(Placeholder bio — swap in your real story.)</em>
+        </p>
+        <div class="hero__actions reveal">
+          <a href="#projects" class="btn btn--primary">View my work</a>
+          <a href="assets/resume.pdf" class="btn btn--ghost" download>Download CV</a>
+        </div>
+        <ul class="hero__stats reveal" aria-label="Highlights">
+          <li><strong>5+</strong><span>years in data</span></li>
+          <li><strong>20+</strong><span>projects shipped</span></li>
+          <li><strong>10M+</strong><span>rows wrangled</span></li>
+        </ul>
+      </div>
+      <a href="#about" class="hero__scroll" aria-label="Scroll down">
+        <span></span>
+      </a>
+    </section>
+
+    <!-- ===================== ABOUT ===================== -->
+    <section class="section" id="about">
+      <div class="container">
+        <h2 class="section__title reveal"><span class="section__num">01.</span> About me</h2>
+        <div class="about reveal">
+          <div class="about__text">
+            <p>
+              Hello! I'm Gowshigan, a data scientist based in <strong>[Your City]</strong>.
+              I enjoy turning messy, real-world data into clear answers and reliable
+              ML systems. This paragraph is a placeholder — replace it with your
+              background, what you care about, and what you're looking for.
+            </p>
+            <p>
+              I've worked across <strong>data engineering</strong>, <strong>machine learning</strong>,
+              and <strong>analytics</strong>, shipping things people actually use. Recently
+              I've been focused on <strong>[your current focus]</strong>.
+            </p>
+            <p>Here are a few technologies I work with day to day:</p>
+            <ul class="about__list">
+              <li>Python</li>
+              <li>SQL</li>
+              <li>PyTorch</li>
+              <li>scikit-learn</li>
+              <li>Spark</li>
+              <li>dbt</li>
+              <li>AWS</li>
+              <li>Docker</li>
+            </ul>
+          </div>
+          <div class="about__photo">
+            <div class="about__photo-frame">
+              <img src="assets/portrait.svg" alt="Portrait placeholder of Gowshigan" loading="lazy" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== SKILLS ===================== -->
+    <section class="section section--alt" id="skills">
+      <div class="container">
+        <h2 class="section__title reveal"><span class="section__num">02.</span> What I do</h2>
+        <div class="cards">
+          <article class="card reveal">
+            <div class="card__icon">📊</div>
+            <h3>Data Science &amp; ML</h3>
+            <p>Modeling, feature engineering, evaluation and experimentation — from baselines to deep learning.</p>
+            <ul class="card__tags"><li>PyTorch</li><li>scikit-learn</li><li>XGBoost</li></ul>
+          </article>
+          <article class="card reveal">
+            <div class="card__icon">🛠️</div>
+            <h3>Data Engineering</h3>
+            <p>Reliable ETL/ELT pipelines, orchestration and warehousing that keep data trustworthy at scale.</p>
+            <ul class="card__tags"><li>Spark</li><li>Airflow</li><li>dbt</li></ul>
+          </article>
+          <article class="card reveal">
+            <div class="card__icon">🚀</div>
+            <h3>MLOps &amp; Deployment</h3>
+            <p>Packaging, serving and monitoring models so they run safely in production, not just notebooks.</p>
+            <ul class="card__tags"><li>Docker</li><li>FastAPI</li><li>AWS</li></ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== PROJECTS ===================== -->
+    <section class="section" id="projects">
+      <div class="container">
+        <h2 class="section__title reveal"><span class="section__num">03.</span> Featured projects</h2>
+        <div class="projects">
+
+          <article class="project reveal">
+            <a class="project__media" href="#" aria-label="Open project">
+              <img src="assets/project-1.svg" alt="Project one preview placeholder" loading="lazy" />
+            </a>
+            <div class="project__body">
+              <p class="project__eyebrow">Featured project</p>
+              <h3 class="project__title">Restaurant Intelligence Scraper</h3>
+              <p class="project__desc">
+                A configurable pipeline that scrapes, geolocates and filters restaurant
+                data from multiple sources, with a clean CLI and CSV/JSON output.
+                <em>(Placeholder — describe impact &amp; results.)</em>
+              </p>
+              <ul class="project__tech"><li>Python</li><li>APIs</li><li>Geo</li><li>pytest</li></ul>
+              <div class="project__links">
+                <a href="#" aria-label="GitHub repository">Code</a>
+                <a href="#" aria-label="Live demo">Demo</a>
+              </div>
+            </div>
+          </article>
+
+          <article class="project project--reverse reveal">
+            <a class="project__media" href="#" aria-label="Open project">
+              <img src="assets/project-2.svg" alt="Project two preview placeholder" loading="lazy" />
+            </a>
+            <div class="project__body">
+              <p class="project__eyebrow">Featured project</p>
+              <h3 class="project__title">Churn Prediction Platform</h3>
+              <p class="project__desc">
+                End-to-end ML service predicting customer churn, served via API with
+                monitoring and automated retraining. <em>(Placeholder.)</em>
+              </p>
+              <ul class="project__tech"><li>PyTorch</li><li>FastAPI</li><li>Docker</li><li>AWS</li></ul>
+              <div class="project__links">
+                <a href="#" aria-label="GitHub repository">Code</a>
+                <a href="#" aria-label="Live demo">Demo</a>
+              </div>
+            </div>
+          </article>
+
+          <article class="project reveal">
+            <a class="project__media" href="#" aria-label="Open project">
+              <img src="assets/project-3.svg" alt="Project three preview placeholder" loading="lazy" />
+            </a>
+            <div class="project__body">
+              <p class="project__eyebrow">Featured project</p>
+              <h3 class="project__title">Realtime Analytics Dashboard</h3>
+              <p class="project__desc">
+                Streaming metrics dashboard turning raw events into live KPIs for
+                non-technical stakeholders. <em>(Placeholder.)</em>
+              </p>
+              <ul class="project__tech"><li>Spark</li><li>dbt</li><li>React</li><li>SQL</li></ul>
+              <div class="project__links">
+                <a href="#" aria-label="GitHub repository">Code</a>
+                <a href="#" aria-label="Live demo">Demo</a>
+              </div>
+            </div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== EXPERIENCE ===================== -->
+    <section class="section section--alt" id="experience">
+      <div class="container">
+        <h2 class="section__title reveal"><span class="section__num">04.</span> Experience</h2>
+        <ol class="timeline">
+          <li class="timeline__item reveal">
+            <div class="timeline__dot"></div>
+            <span class="timeline__date">2023 — Present</span>
+            <h3 class="timeline__role">Data Scientist <span>@ Company</span></h3>
+            <p>Placeholder role. Led ML initiatives that drove measurable impact. Replace with real bullet points and metrics.</p>
+          </li>
+          <li class="timeline__item reveal">
+            <div class="timeline__dot"></div>
+            <span class="timeline__date">2021 — 2023</span>
+            <h3 class="timeline__role">Data Analyst <span>@ Company</span></h3>
+            <p>Placeholder role. Built dashboards and pipelines supporting key decisions.</p>
+          </li>
+          <li class="timeline__item reveal">
+            <div class="timeline__dot"></div>
+            <span class="timeline__date">2020 — 2021</span>
+            <h3 class="timeline__role">ML Intern <span>@ Company</span></h3>
+            <p>Placeholder role. Prototyped models and learned to ship.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ===================== CONTACT ===================== -->
+    <section class="section section--contact" id="contact">
+      <div class="container contact">
+        <p class="contact__eyebrow reveal">05. What's next?</p>
+        <h2 class="contact__title reveal">Let's build something</h2>
+        <p class="contact__lead reveal">
+          I'm open to new opportunities and collaborations. Whether you have a
+          question or just want to say hi, my inbox is always open.
+        </p>
+        <a href="mailto:gowshigan6@gmail.com" class="btn btn--primary reveal">Say hello</a>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===================== FOOTER ===================== -->
+  <footer class="footer">
+    <ul class="footer__social" aria-label="Social links">
+      <li><a href="#" aria-label="GitHub">GitHub</a></li>
+      <li><a href="#" aria-label="LinkedIn">LinkedIn</a></li>
+      <li><a href="#" aria-label="Twitter / X">X</a></li>
+      <li><a href="mailto:gowshigan6@gmail.com" aria-label="Email">Email</a></li>
+    </ul>
+    <p class="footer__credit">Designed &amp; built by Gowshigan · Placeholder content — iterate freely.</p>
+  </footer>
+
+  <script src="scripts/main.js" defer></script>
+</body>
+</html>

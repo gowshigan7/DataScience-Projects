@@ -1,0 +1,15 @@
+{
+  "name": "portfolio-website",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Modern, sleek personal portfolio website with Playwright tests.",
+  "scripts": {
+    "serve": "npx --yes http-server . -p 4173 -c-1 --silent",
+    "test": "playwright test",
+    "shots": "node scripts/screenshot.mjs"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.56.1",
+    "http-server": "^14.1.1"
+  }
+}
