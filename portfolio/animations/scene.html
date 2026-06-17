@@ -15,8 +15,17 @@
 <body>
   <canvas id="c"></canvas>
   <script src="engine.js"></script>
-  <!-- scene registry (add the other 9 here as they are built) -->
+  <!-- scene registry -->
   <script src="scenes/01-latent-space.js"></script>
+  <script src="scenes/02-gradient-descent.js"></script>
+  <script src="scenes/03-neural-net.js"></script>
+  <script src="scenes/04-k-means.js"></script>
+  <script src="scenes/05-decision-boundary.js"></script>
+  <script src="scenes/06-attention.js"></script>
+  <script src="scenes/07-gmm-density.js"></script>
+  <script src="scenes/08-sorting.js"></script>
+  <script src="scenes/09-graph-search.js"></script>
+  <script src="scenes/10-convolution.js"></script>
   <script>
     const params = new URLSearchParams(location.search);
     const id = params.get('scene') || '01';
