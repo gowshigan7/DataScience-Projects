@@ -19,6 +19,7 @@ const ROOT = fileURLToPath(new URL('..', import.meta.url));
 const PORT = 4181;
 const GIF_W = 512, GIF_H = 288, FRAMES = 48, DELAY = Math.round(6000 / FRAMES);
 const STILLS = [0.18, 0.5, 0.82];
+const THEMES = ['dark', 'light'];
 
 const MIME = { '.html': 'text/html', '.css': 'text/css', '.js': 'text/javascript', '.svg': 'image/svg+xml', '.json': 'application/json' };
 const server = createServer(async (req, res) => {
@@ -47,41 +48,43 @@ try {
   }
 
   for (const id of ids) {
-    const page = await browser.newPage({ viewport: { width: 1280, height: 760 }, deviceScaleFactor: 2 });
-    await page.goto(`http://127.0.0.1:${PORT}/animations/scene.html?scene=${id}`, { waitUntil: 'networkidle' });
-    await page.waitForFunction('window.__ready === true');
+    for (const theme of THEMES) {
+      const page = await browser.newPage({ viewport: { width: 1280, height: 760 }, deviceScaleFactor: 2 });
+      await page.goto(`http://127.0.0.1:${PORT}/animations/scene.html?scene=${id}&theme=${theme}`, { waitUntil: 'networkidle' });
+      await page.waitForFunction('window.__ready === true');
 
-    // crisp stills
-    for (const t of STILLS) {
-      await page.evaluate((tt) => window.__renderAt(tt), t);
-      await page.locator('canvas').screenshot({ path: join(ROOT, 'animations', 'out', `${id}-t${Math.round(t * 100)}.png`) });
-    }
+      // crisp stills
+      for (const t of STILLS) {
+        await page.evaluate((tt) => window.__renderAt(tt), t);
+        await page.locator('canvas').screenshot({ path: join(ROOT, 'animations', 'out', `${id}-${theme}-t${Math.round(t * 100)}.png`) });
+      }
 
-    // looping gif — capture downscaled RGBA per frame, encode in Node
-    const enc = GIFEncoder();
-    for (let f = 0; f < FRAMES; f++) {
-      const b64 = await page.evaluate(({ t, GW, GH }) => {
-        window.__renderAt(t);
-        const src = document.querySelector('canvas');
-        let off = window.__off;
-        if (!off) { off = window.__off = document.createElement('canvas'); off.width = GW; off.height = GH; }
-        const octx = off.getContext('2d');
-        octx.clearRect(0, 0, GW, GH);
-        octx.drawImage(src, 0, 0, GW, GH);
-        const u8 = new Uint8Array(octx.getImageData(0, 0, GW, GH).data.buffer);
-        let bin = ''; const ch = 0x8000;
-        for (let i = 0; i < u8.length; i += ch) bin += String.fromCharCode.apply(null, u8.subarray(i, i + ch));
-        return btoa(bin);
-      }, { t: f / FRAMES, GW: GIF_W, GH: GIF_H });
-      const data = new Uint8ClampedArray(Buffer.from(b64, 'base64'));
-      const palette = quantize(data, 256);
-      const index = applyPalette(data, palette);
-      enc.writeFrame(index, GIF_W, GIF_H, { palette, delay: DELAY, repeat: 0 });
+      // looping gif — capture downscaled RGBA per frame, encode in Node
+      const enc = GIFEncoder();
+      for (let f = 0; f < FRAMES; f++) {
+        const b64 = await page.evaluate(({ t, GW, GH }) => {
+          window.__renderAt(t);
+          const src = document.querySelector('canvas');
+          let off = window.__off;
+          if (!off) { off = window.__off = document.createElement('canvas'); off.width = GW; off.height = GH; }
+          const octx = off.getContext('2d');
+          octx.clearRect(0, 0, GW, GH);
+          octx.drawImage(src, 0, 0, GW, GH);
+          const u8 = new Uint8Array(octx.getImageData(0, 0, GW, GH).data.buffer);
+          let bin = ''; const ch = 0x8000;
+          for (let i = 0; i < u8.length; i += ch) bin += String.fromCharCode.apply(null, u8.subarray(i, i + ch));
+          return btoa(bin);
+        }, { t: f / FRAMES, GW: GIF_W, GH: GIF_H });
+        const data = new Uint8ClampedArray(Buffer.from(b64, 'base64'));
+        const palette = quantize(data, 256);
+        const index = applyPalette(data, palette);
+        enc.writeFrame(index, GIF_W, GIF_H, { palette, delay: DELAY, repeat: 0 });
+      }
+      enc.finish();
+      await writeFile(join(ROOT, 'animations', 'out', `${id}-${theme}.gif`), Buffer.from(enc.bytesView()));
+      console.log(`rendered ${id} [${theme}]: out/${id}-${theme}.gif (+ stills)`);
+      await page.close();
     }
-    enc.finish();
-    await writeFile(join(ROOT, 'animations', 'out', `${id}.gif`), Buffer.from(enc.bytesView()));
-    console.log(`rendered ${id}: out/${id}.gif (+ stills)`);
-    await page.close();
   }
 } finally {
   await browser.close();

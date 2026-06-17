@@ -18,8 +18,11 @@
   <!-- scene registry (add the other 9 here as they are built) -->
   <script src="scenes/01-latent-space.js"></script>
   <script>
-    const id = new URLSearchParams(location.search).get('scene') || '01';
-    const a = window.Anim.mount(document.getElementById('c'), id);
+    const params = new URLSearchParams(location.search);
+    const id = params.get('scene') || '01';
+    const theme = params.get('theme') || 'dark';
+    document.body.style.background = window.Anim.THEMES[theme].bg;
+    const a = window.Anim.mount(document.getElementById('c'), id, theme);
     // Exposed for the headless frame exporter:
     window.__renderAt = (t) => a.renderAt(t);
     window.__ready = true;

@@ -4,22 +4,22 @@
    + the latent-space hero signature. Deterministic & seamlessly looping. */
 (function () {
   'use strict';
-  const W = window.Anim.W, H = window.Anim.H, P = window.Anim.PALETTE;
+  const W = window.Anim.W, H = window.Anim.H;
   let S = null;
 
   function build(env) {
     const rnd = env.rng(7);
     const centers = [
-      { x: 0.40 * W, y: 0.45 * H, c: P.teal },
-      { x: 0.64 * W, y: 0.63 * H, c: P.clay },
-      { x: 0.76 * W, y: 0.34 * H, c: P.sand },
+      { x: 0.40 * W, y: 0.45 * H, key: 'teal' },
+      { x: 0.64 * W, y: 0.63 * H, key: 'clay' },
+      { x: 0.76 * W, y: 0.34 * H, key: 'sand' },
     ];
     const N = 72, K = 7;
     const pts = [];
     for (let i = 0; i < N; i++) {
       const ci = i % 3, c = centers[ci];
       pts.push({
-        ci, color: c.c,
+        ci, key: c.key,
         hx: c.x + env.gauss(rnd) * 46,
         hy: c.y + env.gauss(rnd) * 40,
         phase: rnd() * Math.PI * 2,
@@ -37,6 +37,7 @@
 
   function draw(ctx, t, env) {
     if (!S) S = build(env);
+    const P = env.P;
     const pos = S.pts.map((p) => ({
       x: p.hx + Math.cos(p.phase + p.spin * 2 * Math.PI * t) * p.amp,
       y: p.hy + Math.sin(p.phase + p.spin * 2 * Math.PI * t) * p.amp,
@@ -50,7 +51,7 @@
         const dx = pos[i].x - pos[j].x, dy = pos[i].y - pos[j].y;
         const d2 = dx * dx + dy * dy;
         if (d2 < 5200) {
-          ctx.strokeStyle = S.pts[i].color;
+          ctx.strokeStyle = P[S.pts[i].key];
           ctx.globalAlpha = 0.12 * (1 - d2 / 5200);
           ctx.beginPath(); ctx.moveTo(pos[i].x, pos[i].y); ctx.lineTo(pos[j].x, pos[j].y); ctx.stroke();
         }
@@ -80,7 +81,7 @@
         ctx.globalAlpha = 1;
         env.dot(ctx, pos[i].x, pos[i].y, 3.4, P.sand, 0.85 + 0.15 * hi);
       } else {
-        env.dot(ctx, pos[i].x, pos[i].y, 2.2, S.pts[i].color, 0.78);
+        env.dot(ctx, pos[i].x, pos[i].y, 2.2, P[S.pts[i].key], 0.78);
       }
     }
 

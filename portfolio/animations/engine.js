@@ -8,14 +8,25 @@
 window.Anim = (function () {
   'use strict';
 
-  const PALETTE = {
-    bg: '#0e0d0f', grid: '#1b1820',
-    teal: '#2fc3b4',  // active / current
-    clay: '#df7a57',  // data / secondary
-    sand: '#e8a766',  // result / highlight
-    dim: '#46434a',   // inactive
-    label: '#b0a6a0',
+  const THEMES = {
+    dark: {
+      bg: '#0e0d0f', grid: '#1b1820',
+      teal: '#2fc3b4',  // active / current
+      clay: '#df7a57',  // data / secondary
+      sand: '#e8a766',  // result / highlight
+      dim: '#46434a',   // inactive
+      label: '#b0a6a0',
+    },
+    light: {
+      bg: '#f4efe9', grid: '#e3dccf', // warm paper + faint warm grid
+      teal: '#0e9384',
+      clay: '#bf5128',
+      sand: '#a86d12',
+      dim: '#c3bbb0',
+      label: '#6c645c',
+    },
   };
+  const PALETTE = THEMES.dark; // default
   const W = 1200, H = 675, M = 64, LOOP = 6000;
   const registry = {};
 
@@ -54,46 +65,47 @@ window.Anim = (function () {
     },
   };
 
-  function background(ctx) {
-    ctx.fillStyle = PALETTE.bg; ctx.fillRect(0, 0, W, H);
-    ctx.strokeStyle = PALETTE.grid; ctx.lineWidth = 1;
+  function background(ctx, P) {
+    ctx.fillStyle = P.bg; ctx.fillRect(0, 0, W, H);
+    ctx.strokeStyle = P.grid; ctx.lineWidth = 1;
     ctx.beginPath();
     for (let x = M; x <= W - M; x += 48) { ctx.moveTo(x + 0.5, M); ctx.lineTo(x + 0.5, H - M); }
     for (let y = M; y <= H - M; y += 48) { ctx.moveTo(M, y + 0.5); ctx.lineTo(W - M, y + 0.5); }
     ctx.stroke();
   }
 
-  function label(ctx, scene) {
-    ctx.fillStyle = PALETTE.label;
+  function label(ctx, scene, P) {
+    ctx.fillStyle = P.label;
     ctx.font = '14px "JetBrains Mono", ui-monospace, monospace';
     ctx.textBaseline = 'alphabetic';
     ctx.fillText('// ' + scene.label, M, H - M + 36);
     // index tag, top-right, for a consistent "set" feel
-    ctx.fillStyle = PALETTE.dim;
+    ctx.fillStyle = P.dim;
     ctx.textAlign = 'right';
     ctx.fillText(scene.id, W - M, M - 24);
     ctx.textAlign = 'left';
   }
 
-  function frame(ctx, scene, t) {
+  function frame(ctx, scene, t, menv) {
     t = ((t % 1) + 1) % 1;
-    background(ctx);
+    background(ctx, menv.P);
     ctx.save();
-    scene.draw(ctx, t, env);
+    scene.draw(ctx, t, menv);
     ctx.restore();
-    label(ctx, scene);
+    label(ctx, scene, menv.P);
   }
 
   // Mount a scene on a canvas. Returns controls; renderAt(t) is used by the
   // headless exporter for deterministic frames.
-  function mount(canvas, id) {
+  function mount(canvas, id, theme = 'dark') {
     const scene = get(id);
     if (!scene) return null;
     canvas.width = W; canvas.height = H;
     const ctx = canvas.getContext('2d');
+    const menv = Object.assign({}, env, { P: THEMES[theme] || THEMES.dark });
     const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
     let raf = 0, start = 0;
-    const renderAt = (t) => frame(ctx, scene, t);
+    const renderAt = (t) => frame(ctx, scene, t, menv);
     const loop = (now) => { if (!start) start = now; renderAt((now - start) / LOOP); raf = requestAnimationFrame(loop); };
     return {
       scene, renderAt,
@@ -102,5 +114,5 @@ window.Anim = (function () {
     };
   }
 
-  return { PALETTE, W, H, M, LOOP, register, get, list, mount, frame };
+  return { PALETTE, THEMES, W, H, M, LOOP, register, get, list, mount, frame };
 })();
