@@ -18,6 +18,6 @@
     <rect x="294" y="170" width="132" height="14" rx="7" fill="url(#ac3)"/>
     <rect x="504" y="250" width="132" height="14" rx="7" fill="url(#ac3)"/>
   </g>
-  <text x="60" y="90" font-family="JetBrains Mono, monospace" font-size="22" fill="#6ee7ff">live · KPIs</text>
-  <text x="60" y="130" font-family="Inter, sans-serif" font-size="30" font-weight="800" fill="#e6ecf7">Analytics Dashboard</text>
+  <text x="60" y="90" font-family="JetBrains Mono, monospace" font-size="22" fill="#6ee7ff">notebooks · ML</text>
+  <text x="60" y="130" font-family="Inter, sans-serif" font-size="30" font-weight="800" fill="#e6ecf7">Data Science Projects</text>
 </svg>

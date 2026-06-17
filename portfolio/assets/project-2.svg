@@ -16,6 +16,6 @@
     <circle cx="360" cy="250" r="40"/>
   </g>
   <circle cx="360" cy="250" r="10" fill="url(#ac2)"/>
-  <text x="60" y="90" font-family="JetBrains Mono, monospace" font-size="22" fill="#a78bfa">model.predict()</text>
-  <text x="60" y="130" font-family="Inter, sans-serif" font-size="30" font-weight="800" fill="#e6ecf7">Churn Prediction</text>
+  <text x="60" y="90" font-family="JetBrains Mono, monospace" font-size="22" fill="#a78bfa">E-M algorithm</text>
+  <text x="60" y="130" font-family="Inter, sans-serif" font-size="30" font-weight="800" fill="#e6ecf7">GMM from Scratch</text>
 </svg>
