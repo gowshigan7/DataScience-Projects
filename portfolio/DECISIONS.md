@@ -77,7 +77,27 @@ Demandé : mettre des placeholders pour les assets manquants.
 - **Limite** : les URLs de preview changent à chaque déploiement. Pour une URL privée **stable**, il faut
   soit passer en **Pro** (protéger la prod), soit brancher le repo Git (URL de branche stable + protection).
 
-## 8. À décider plus tard (en attente de ton background)
+## 8. Animations DS / AI / CS (`animations/`)
+
+Demandé : ~10 animations thématiques (data science, IA, informatique), **uniformes**,
+avec storyboard d'abord.
+
+| Décision | Choix | Pourquoi |
+|---|---|---|
+| Rendu | **Canvas web natif** (un moteur partagé) | Net à toute taille, minuscule, instantané, accessible. Rend le mieux *sur le site*. Choisi vs Remotion (raster, lourd) pour l'usage portfolio. |
+| Export vidéo | **Capture headless → GIF** (gifenc) | `ffmpeg` absent du conteneur. Frames déterministes via `renderAt(t)` captées par Playwright, encodées en GIF côté Node. MP4/Remotion gardé pour la fin. |
+| Uniformité | **Moteur impose** format, palette, grille, label, timing | Une scène ne décrit que *son concept* → cohérence par construction. Storyboard (`STORYBOARD.md`) validé avant production. |
+| Scène = fonction pure | `draw(ctx, t, env)`, `t ∈ [0,1)` déterministe, bouclé 6 s | Reproductible (frames identiques), testable, exportable. |
+| Thèmes | **sombre + clair**, palette par montage (`env.P`), couleurs par **clé** | Demandé. Couleurs résolues au rendu (pas figées) → changer de thème recolore tout sans toucher aux scènes. |
+| Palette sémantique | teal = actif · clay = données · sand = résultat | Lecture immédiate du « concept qui converge » dans chaque scène. |
+
+**Les 10** : latent-space, gradient-descent, neural-net, k-means, decision-boundary,
+attention, gmm-density, sorting, graph-search, convolution.
+
+**Détails** : voir [`animations/README.md`](./animations/README.md) (archi, ajout d'une scène,
+commandes) et [`animations/STORYBOARD.md`](./animations/STORYBOARD.md) (système visuel).
+
+## 9. À décider plus tard (en attente de ton background)
 
 - Vrais nom / titre / bio / ville.
 - Vrais projets (titres, descriptions, liens, vraies captures).

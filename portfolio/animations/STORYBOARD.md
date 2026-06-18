@@ -97,3 +97,15 @@ animations/
 Chaque scène = **une fonction pure `draw(ctx, t, palette)`**, `t` normalisé sur la boucle.
 Le moteur impose le format, la palette, la grille, le label et le timing → **uniformité par
 construction**.
+
+---
+
+## 6. Statut
+
+✅ **Les 10 scènes sont construites** (`scenes/01…10`), chacune en thème **sombre** et
+**clair**, déterministes et bouclées 6 s. Moteur (`engine.js`), viewer (`scene.html`),
+galerie avec toggle (`gallery.html`) et export GIF+stills (`scripts/render-gif.mjs`) en
+place. Voir **[README.md](./README.md)** pour la prise en main et les commandes.
+
+Reste optionnel : export **MP4/Remotion**, intégration des scènes dans le site, mise en
+ligne de la galerie.

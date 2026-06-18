@@ -11,6 +11,20 @@ python3 -m http.server 4173      # then open http://localhost:4173
 # or: npm run serve
 ```
 
+## Animations (DS / AI / CS)
+
+Ten uniform, looping canvas animations (embeddings, gradient descent, attention,
+k-means, …) live under [`animations/`](./animations/). Shared engine + one pure
+function per scene, dark **and** light themes, with a headless GIF exporter.
+
+```bash
+npm run serve     # then open http://localhost:4173/animations/gallery.html
+npm run render    # export GIFs + stills to animations/out/
+```
+
+Full docs: [`animations/README.md`](./animations/README.md) ·
+design system: [`animations/STORYBOARD.md`](./animations/STORYBOARD.md).
+
 ## Playwright
 
 ```bash
