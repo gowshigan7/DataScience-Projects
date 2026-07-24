@@ -1,0 +1,3 @@
+# geolocation_facts n'a aucune dépendance externe : il n'utilise que la
+# bibliothèque standard de Python (urllib, json, math, argparse).
+# Ce fichier (vide) indique à Vercel d'utiliser le runtime Python pour /api.
