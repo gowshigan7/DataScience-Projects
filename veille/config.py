@@ -17,6 +17,7 @@ Sortie  : Variables importées par les autres modules
 """
 
 import os
+from urllib.parse import quote_plus
 
 # ---------------------------------------------------------------------------
 # Fichiers et dossiers (dans ~/.veille par défaut, surchargeable par variable d'env)
@@ -100,3 +101,145 @@ NEW_BADGE = "🆕"
 DATE_DISPLAY_FORMAT = "%d/%m/%Y"
 GENERATED_AT_FORMAT = "%d/%m/%Y %H:%M"
 REPORT_STEM_FORMAT = "veille_%Y-%m-%d_%H%M"
+
+# ===========================================================================
+# DIGEST IA (commande « digest ») — flux fixes, sans sujet
+# ===========================================================================
+
+ATOM_NS = "http://www.w3.org/2005/Atom"
+DIGEST_TOPIC_NAME = "Veille IA"           # Nom utilisé pour le rapport et l'historique
+DIGEST_DEFAULT_SINCE_DAYS = 1
+DIGEST_MAX_PER_FEED = 15
+
+# Groupes affichés dans le rapport (ordre d'affichage)
+GROUP_LABS = "Labs & entreprises"
+GROUP_PRESS = "Presse (labs sans flux)"
+GROUP_RESEARCH = "Recherche"
+GROUP_RELEASES = "Releases & outils"
+GROUP_COMMUNITY = "Communauté"
+GROUP_NEWSLETTERS = "Newsletters"
+GROUP_X = "X (via Grok)"
+DIGEST_GROUPS = [GROUP_LABS, GROUP_PRESS, GROUP_X, GROUP_NEWSLETTERS, GROUP_RESEARCH,
+                 GROUP_RELEASES, GROUP_COMMUNITY]
+
+_GN = GOOGLE_NEWS_RSS_URL + "?hl=en-US&gl=US&ceid=US:en&q="
+AI_KEYWORDS = ["ai", "a.i.", "llm", "gpt", "model", "agent", "inference", "training",
+               "neural", "machine learning", "deep learning", "transformer", "genai",
+               "generative", "openai", "anthropic", "claude", "gemini", "llama", "mistral",
+               "deepseek", "qwen", "grok", "copilot", "diffusion", "reasoning", "cuda", "gpu"]
+
+# Flux RSS / Atom. "keywords" (optionnel) = ne garder que les items qui en contiennent un.
+DIGEST_FEEDS = [
+    {"name": "OpenAI", "group": GROUP_LABS, "url": "https://openai.com/news/rss.xml"},
+    {"name": "Google DeepMind", "group": GROUP_LABS, "url": "https://deepmind.google/blog/rss.xml"},
+    {"name": "Google AI", "group": GROUP_LABS, "url": "https://blog.google/technology/ai/rss/"},
+    {"name": "Google Research", "group": GROUP_LABS, "url": "https://research.google/blog/rss/"},
+    {"name": "Microsoft AI", "group": GROUP_LABS, "url": "https://blogs.microsoft.com/ai/feed/"},
+    {"name": "Microsoft Research", "group": GROUP_LABS,
+     "url": "https://www.microsoft.com/en-us/research/feed/"},
+    {"name": "NVIDIA", "group": GROUP_LABS, "url": "https://blogs.nvidia.com/feed/",
+     "keywords": AI_KEYWORDS},
+    {"name": "NVIDIA Developer", "group": GROUP_LABS, "url": "https://developer.nvidia.com/blog/feed",
+     "keywords": AI_KEYWORDS},
+    {"name": "Hugging Face", "group": GROUP_LABS, "url": "https://huggingface.co/blog/feed.xml"},
+    # Labs sans flux RSS officiel → presse via Google News
+    {"name": "Anthropic (presse)", "group": GROUP_PRESS,
+     "url": _GN + quote_plus('"Anthropic" OR "Claude AI" when:2d')},
+    {"name": "Meta AI (presse)", "group": GROUP_PRESS,
+     "url": _GN + quote_plus('"Meta AI" OR "Llama" OR "Meta Superintelligence" when:2d')},
+    {"name": "xAI (presse)", "group": GROUP_PRESS, "url": _GN + quote_plus('"xAI" OR "Grok" when:2d')},
+    {"name": "Mistral (presse)", "group": GROUP_PRESS, "url": _GN + quote_plus('"Mistral AI" when:2d')},
+    {"name": "DeepSeek / Qwen (presse)", "group": GROUP_PRESS,
+     "url": _GN + quote_plus('"DeepSeek" OR "Qwen" when:2d')},
+    # Recherche
+    {"name": "arXiv (cs.AI, cs.CL, cs.LG)", "group": GROUP_RESEARCH,
+     "url": "https://rss.arxiv.org/rss/cs.AI+cs.CL+cs.LG"},
+]
+
+# Releases GitHub (flux Atom https://github.com/<repo>/releases.atom)
+GITHUB_RELEASES_URL = "https://github.com/{repo}/releases.atom"
+GITHUB_REPOS = ["anthropics/claude-code", "openai/codex", "google-gemini/gemini-cli",
+                "huggingface/transformers", "vllm-project/vllm", "ollama/ollama",
+                "modelcontextprotocol/modelcontextprotocol"]
+GITHUB_RELEASES_MAX = 3                   # Releases max par dépôt
+
+# Hugging Face Daily Papers
+HF_DAILY_PAPERS_URL = "https://huggingface.co/api/daily_papers"
+HF_PAPER_URL = "https://huggingface.co/papers/"
+HF_PAPERS_MIN_UPVOTES = 5
+
+# Hacker News (stories populaires filtrées par AI_KEYWORDS)
+HACKER_NEWS_DIGEST_URL = "https://hn.algolia.com/api/v1/search"
+HACKER_NEWS_MIN_POINTS = 100
+HACKER_NEWS_DIGEST_HITS = 100
+
+# Reddit (JSON public, repli sur le flux Atom si bloqué)
+REDDIT_TOP_JSON_URL = "https://www.reddit.com/r/{sub}/top.json"
+REDDIT_TOP_RSS_URL = "https://www.reddit.com/r/{sub}/top/.rss"
+REDDIT_BASE_URL = "https://www.reddit.com"
+REDDIT_SUBREDDITS = ["LocalLLaMA", "MachineLearning", "OpenAI", "ClaudeAI", "singularity"]
+REDDIT_MIN_SCORE = 100
+REDDIT_MAX_PER_SUB = 10
+REDDIT_PERIOD_DAY = "day"
+REDDIT_PERIOD_WEEK = "week"
+
+# Boîte mail (IMAP) — newsletters des expéditeurs choisis
+IMAP_HOST = os.environ.get("VEILLE_IMAP_HOST", "imap.gmail.com")
+IMAP_USER = os.environ.get("VEILLE_IMAP_USER", "")
+IMAP_PASSWORD = os.environ.get("VEILLE_IMAP_PASSWORD", "")   # mot de passe d'application
+IMAP_FOLDER = os.environ.get("VEILLE_IMAP_FOLDER", "INBOX")
+IMAP_DATE_FORMAT = "%d-%b-%Y"
+IMAP_OK_STATUS = "OK"
+# Expéditeurs retenus (sous-chaîne de l'adresse ou du domaine). À adapter à vos abonnements.
+NEWSLETTER_SENDERS = [s.strip() for s in os.environ.get(
+    "VEILLE_NEWSLETTER_SENDERS",
+    "tldrnewsletter.com,deeplearning.ai,smol.ai,therundown.ai,bensbites,importai,"
+    "lastweekin.ai,alphasignal.ai,interconnects.ai,latent.space").split(",") if s.strip()]
+NEWSLETTER_SUMMARY_CHARS = 400
+NEWSLETTER_SKIP_LINK_WORDS = ["unsubscribe", "désinscri", "desinscri", "preferences",
+                              "manage", "privacy", "mailto:", "twitter.com/intent"]
+NEWSLETTER_WEB_VERSION_WORDS = ["view in browser", "view online", "web version",
+                                "read online", "voir en ligne", "version web"]
+
+# Grok (xAI) — recherche des posts X des comptes suivis
+XAI_API_KEY = os.environ.get("XAI_API_KEY", "")
+XAI_RESPONSES_URL = "https://api.x.ai/v1/responses"
+GROK_MODEL = os.environ.get("VEILLE_GROK_MODEL", "grok-4-1-fast")
+GROK_TIMEOUT_SECONDS = 120
+GROK_MAX_HANDLES_PER_CALL = 20            # Limite de l'outil x_search
+GROK_MAX_POSTS_PER_CALL = 25
+X_POST_URL = "https://x.com/{handle}/status/{id}"
+X_HANDLES = [
+    # Labs
+    "OpenAI", "GoogleDeepMind", "xai", "AnthropicAI", "AIatMeta", "MistralAI", "deepseek_ai",
+    "Alibaba_Qwen", "huggingface", "nvidia", "MSFTResearch",
+    # Personnes
+    "karpathy", "ylecun", "emollick", "sama", "demishassabis", "AndrewYNg", "simonw",
+    "swyx", "_akhaliq", "ClementDelangue",
+]
+GROK_PROMPT = (
+    "Search X for the most important posts published by these accounts since {from_date}: "
+    "announcements, model releases, research, product launches, notable opinions. Skip "
+    "replies and small talk. Answer ONLY with a JSON array (no prose, no code fence) of at "
+    "most {max_posts} objects with keys: \"handle\" (without @), \"date\" (YYYY-MM-DD), "
+    "\"text\" (the post, or a faithful one-sentence summary in its language), \"url\" "
+    "(the post URL)."
+)
+X_TITLE_CHARS = 140
+
+# Sites à ouvrir à la main (affichés en tête du rapport digest)
+MANUAL_LINKS = [
+    {"label": "OpenAI — News", "url": "https://openai.com/news/"},
+    {"label": "Anthropic — News", "url": "https://www.anthropic.com/news"},
+    {"label": "xAI — News", "url": "https://x.ai/news"},
+    {"label": "Claude Code — Changelog",
+     "url": "https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md"},
+    {"label": "Codex — Changelog", "url": "https://developers.openai.com/codex/changelog"},
+    {"label": "Cursor — Changelog", "url": "https://cursor.com/changelog"},
+    {"label": "Gemini CLI — Releases", "url": "https://github.com/google-gemini/gemini-cli/releases"},
+    {"label": "Artificial Analysis", "url": "https://artificialanalysis.ai/"},
+]
+
+DIGEST_SOURCE_KINDS = ["feeds", "github", "hf_papers", "hacker_news", "reddit", "mail", "grok"]
+FEED_SUMMARY_MAX_CHARS = 400              # Résumés tronqués (notes de release, abstracts)
+ISO_DATE_FORMAT = "%Y-%m-%d"

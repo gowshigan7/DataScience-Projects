@@ -5,7 +5,7 @@ Feature : Rapport de veille au format HTML autonome (un seul fichier, sans dépe
 
 Description :
     Page lisible dans un navigateur : un bloc par sujet, compteurs par
-    catégorie, cartes d'articles (badge « Nouveau », média, date, extrait,
+    catégorie, liens « à ouvrir à la main » (digest), cartes d'articles (badge « Nouveau », média, date, extrait,
     reprises), champ de recherche pour filtrer, thème clair/sombre automatique.
 
 Cas d'usage :
@@ -31,7 +31,7 @@ h3{font-size:1rem;margin:20px 0 8px;color:var(--muted);text-transform:uppercase;
 article{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:8px}
 article a{color:var(--accent);font-weight:600;text-decoration:none}article a:hover{text-decoration:underline}
 .meta{color:var(--muted);font-size:.85rem;margin-top:2px}.sum{margin:6px 0 0;font-size:.92rem}
-.new{color:var(--new);font-weight:700;font-size:.75rem;margin-right:6px}.err{color:#c0392b;font-size:.9rem}
+.new{color:var(--new);font-weight:700;font-size:.75rem;margin-right:6px}.err{color:#c0392b;font-size:.9rem}a.chip{color:var(--accent);text-decoration:none}
 """
 
 _JS = """
@@ -79,9 +79,14 @@ def format_html(results: list, generated_at: str) -> str:
         body.append(f'<section class="topic"><h2>{escape(res["topic"]["name"])}</h2>'
                     f'<p class="sub">{len(arts)} articles · {n_new} nouveaux</p>'
                     f'<div class="chips">{chips}</div>')
+        if res.get("links"):
+            links = "".join(f'<a class="chip" href="{escape(l["url"])}" target="_blank" '
+                            f'rel="noopener">{escape(l["label"])} ↗</a>' for l in res["links"])
+            body.append(f'<h3>À ouvrir à la main</h3><div class="chips">{links}</div>')
         for category, items in groups:
             body.append(f"<h3>{escape(category)}</h3>" + "".join(_article_html(a) for a in items))
         body += [f'<p class="err">⚠ Source indisponible : {escape(e)}</p>' for e in res.get("errors", [])]
+        body += [f'<p class="sub">ℹ Source ignorée — {escape(n)}</p>' for n in res.get("skipped", [])]
         body.append("</section>")
     names = ", ".join(r["topic"]["name"] for r in results)
     return (f'<!doctype html><html lang="fr"><head><meta charset="utf-8">'

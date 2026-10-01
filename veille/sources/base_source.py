@@ -7,7 +7,7 @@ Description :
     Chaque source étend BaseSource et implémente fetch(topic, since_days).
     Elle retourne une list[dict] construite avec BaseSource.make_article() :
         {"title", "url", "source", "publisher", "published" (datetime UTC | None),
-         "summary", "language"}
+         "summary", "language", "category" (str | None, fixé par les sources du digest)}
     Les fonctions HTTP (http_get) sont centralisées ici pour que les tests
     puissent les remplacer facilement.
 
@@ -19,6 +19,7 @@ Sortie  : list[dict] (articles au format standard)
 """
 
 import html
+import json
 import re
 import urllib.parse
 import urllib.request
@@ -49,6 +50,43 @@ def http_get(url: str, params: dict = None) -> bytes:
         return resp.read()
 
 
+def http_post_json(url: str, payload: dict, headers: dict, timeout: int) -> dict:
+    """
+    Effectue une requête HTTP POST JSON et décode la réponse JSON.
+
+    Args:
+        url (str): URL.
+        payload (dict): Corps de la requête.
+        headers (dict): En-têtes supplémentaires (ex. Authorization).
+        timeout (int): Délai max en secondes.
+
+    Returns:
+        dict: Réponse décodée.
+    """
+    req = urllib.request.Request(
+        url, data=json.dumps(payload).encode(), method="POST",
+        headers={"Content-Type": "application/json", "User-Agent": HTTP_USER_AGENT, **headers})
+    with urllib.request.urlopen(req, timeout=timeout) as resp:
+        return json.loads(resp.read())
+
+
+def matches_keywords(text: str, keywords: list) -> bool:
+    """
+    Teste si un texte contient au moins un mot-clé (mot entier, insensible à la casse).
+
+    Args:
+        text (str): Texte.
+        keywords (list[str] | None): Mots-clés ; si vide/None, retourne True.
+
+    Returns:
+        bool: True si aucun mot-clé n'est exigé ou si l'un d'eux est présent.
+    """
+    if not keywords:
+        return True
+    low = text.lower()
+    return any(re.search(rf"(?<!\w){re.escape(k.lower())}(?!\w)", low) for k in keywords)
+
+
 def clean_text(text: str) -> str:
     """
     Retire les balises HTML et décode les entités.
@@ -60,6 +98,22 @@ def clean_text(text: str) -> str:
         str: Texte propre sur une ligne.
     """
     return " ".join(html.unescape(_TAG_RE.sub(" ", text or "")).split())
+
+
+def truncate(text: str, max_chars: int) -> str:
+    """
+    Tronque un texte sur une frontière de mot.
+
+    Args:
+        text (str): Texte.
+        max_chars (int): Longueur maximale.
+
+    Returns:
+        str: Texte tronqué (suffixe « … ») ou inchangé.
+    """
+    if len(text) <= max_chars:
+        return text
+    return text[:max_chars].rsplit(" ", 1)[0] + "…"
 
 
 def parse_date(value: str):
@@ -119,7 +173,8 @@ class BaseSource(ABC):
         terms = [topic["name"]] + topic.get("aliases", [])
         return " OR ".join(f'"{t}"' for t in terms)
 
-    def make_article(self, title, url, publisher="", published=None, summary="", language=""):
+    def make_article(self, title, url, publisher="", published=None, summary="", language="",
+                     category=None):
         """
         Construit un article au format standard.
 
@@ -130,6 +185,7 @@ class BaseSource(ABC):
             published (datetime | None): Date de publication UTC.
             summary (str): Résumé / extrait.
             language (str): Code langue.
+            category (str | None): Groupe d'affichage (digest) ; None = calculé plus tard.
 
         Returns:
             dict: Article standardisé.
@@ -142,4 +198,5 @@ class BaseSource(ABC):
             "published": published,
             "summary": clean_text(summary),
             "language": language,
+            "category": category,
         }

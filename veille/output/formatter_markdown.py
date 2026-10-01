@@ -35,6 +35,9 @@ def format_markdown(results: list, generated_at: str) -> str:
         n_new = sum(a.get("is_new", False) for a in arts)
         out += [f"## {res['topic']['name']}", "",
                 f"*{len(arts)} articles, dont {n_new} nouveaux.*", ""]
+        if res.get("links"):
+            out += ["**À ouvrir à la main :** " + " · ".join(
+                f"[{l['label']}]({l['url']})" for l in res["links"]), ""]
         for category, items in group_by_category(arts):
             out += [f"### {category}", ""]
             for a in items:
@@ -48,4 +51,6 @@ def format_markdown(results: list, generated_at: str) -> str:
             out.append("")
         for err in res.get("errors", []):
             out.append(f"> ⚠ Source indisponible : {err}")
+        for note in res.get("skipped", []):
+            out.append(f"> ℹ Source ignorée — {note}")
     return "\n".join(out).rstrip() + "\n"

@@ -35,6 +35,9 @@ def format_terminal(results: list) -> str:
         lines += ["=" * TERMINAL_TITLE_WIDTH,
                   f"  VEILLE : {res['topic']['name']}  —  {len(arts)} articles ({n_new} nouveaux)",
                   "=" * TERMINAL_TITLE_WIDTH]
+        if res.get("links"):
+            lines.append("\n▶ À ouvrir à la main")
+            lines += [f"  {l['label']} : {l['url']}" for l in res["links"]]
         for category, items in group_by_category(arts):
             lines.append(f"\n▶ {category} ({len(items)})")
             for a in items:
@@ -44,5 +47,7 @@ def format_terminal(results: list) -> str:
                 lines.append(f"      {a['url']}")
         for err in res.get("errors", []):
             lines.append(f"\n  ⚠ Source indisponible : {err}")
+        for note in res.get("skipped", []):
+            lines.append(f"  ℹ Source ignorée — {note}")
         lines.append("")
     return "\n".join(lines)

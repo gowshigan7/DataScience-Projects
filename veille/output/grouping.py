@@ -14,12 +14,12 @@ Entrée  : list[dict] (articles traités)
 Sortie  : list[tuple[str, list[dict]]] (catégorie, articles)
 """
 
-from veille.config import CATEGORY_KEYWORDS, DATE_DISPLAY_FORMAT, DEFAULT_CATEGORY
+from veille.config import CATEGORY_KEYWORDS, DATE_DISPLAY_FORMAT, DEFAULT_CATEGORY, DIGEST_GROUPS
 
 
 def group_by_category(articles: list) -> list:
     """
-    Regroupe les articles par catégorie, dans l'ordre de configuration.
+    Regroupe les articles par catégorie (ou groupe du digest), dans l'ordre de configuration.
 
     Args:
         articles (list[dict]): Articles avec la clé "category".
@@ -27,7 +27,7 @@ def group_by_category(articles: list) -> list:
     Returns:
         list[tuple[str, list[dict]]]: Catégories non vides avec leurs articles.
     """
-    order = list(CATEGORY_KEYWORDS) + [DEFAULT_CATEGORY]
+    order = DIGEST_GROUPS + list(CATEGORY_KEYWORDS) + [DEFAULT_CATEGORY]
     groups = {c: [] for c in order}
     for a in articles:
         groups.setdefault(a.get("category", DEFAULT_CATEGORY), []).append(a)
