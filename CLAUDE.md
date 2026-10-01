@@ -51,3 +51,13 @@ export GOOGLE_PLACES_API_KEY="your_key"   # optional — OSM fallback works with
 3. Export it from `filters/__init__.py`.
 4. Add the CLI flag in `main.py`.
 5. Add tests in `tests/test_filters.py`.
+
+## Second project — `veille/` (topic monitoring)
+
+```bash
+pytest veille/tests/ -v
+python -m veille.main run --dry-run --since-days 365
+```
+
+Same conventions as above (config-only constants, docstrings, one feature per file,
+dry-run = no network, no files written). See `veille/README.md`.
