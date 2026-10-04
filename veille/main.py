@@ -9,6 +9,7 @@ Description :
     - list    : liste les sujets suivis
     - remove  : retire un sujet
     - run     : lance la veille (tous les sujets ou --topic) et produit le rapport
+    - check   : teste chaque source du digest (statut, nb d'items, secours utilisé)
     - digest  : digest IA à partir de flux fixes (labs, arXiv, HF Papers, GitHub,
                 Hacker News, Reddit, newsletters IMAP, X via Grok)
 
@@ -21,6 +22,7 @@ Cas d'usage :
     python -m veille.main run --topic "Shift Technology" --since-days 7
     python -m veille.main run --dry-run --since-days 365
     python -m veille.main digest --output html --skip grok
+    python -m veille.main check --only reddit anthropic
 
 Entrée  : Arguments CLI
 Sortie  : Rapport (terminal, Markdown, HTML ou JSON)
@@ -32,6 +34,7 @@ from datetime import datetime
 
 from veille.config import (
     DEFAULT_MAX_PER_SOURCE,
+    CHECK_DEFAULT_SINCE_DAYS,
     DIGEST_DEFAULT_SINCE_DAYS,
     DIGEST_MAX_PER_FEED,
     DIGEST_SOURCE_KINDS,
@@ -50,6 +53,7 @@ from veille.config import (
 )
 from veille import topics as tp
 from veille.output.report_writer import render, write_report
+from veille.diagnostics.source_check import check_sources, format_check
 from veille.processing.digest_pipeline import process_digest
 from veille.processing.pipeline import collect, process
 from veille.sources.digest_registry import build_digest_sources
@@ -99,6 +103,12 @@ def build_parser() -> argparse.ArgumentParser:
     dig.add_argument("--only-new", action="store_true", help="N'afficher que les nouveautés")
     dig.add_argument("--dry-run", action="store_true", help="Données de démo, sans réseau")
     dig.add_argument("--save", action="store_true", help="En dry-run, écrire quand même le rapport")
+
+    chk = sub.add_parser("check", help="Tester chaque source du digest")
+    chk.add_argument("--since-days", type=int, default=CHECK_DEFAULT_SINCE_DAYS)
+    chk.add_argument("--skip", nargs="*", choices=DIGEST_SOURCE_KINDS, default=[])
+    chk.add_argument("--only", nargs="*", default=[], help="Ne tester que les sources dont le nom contient…")
+    chk.add_argument("--max", type=int, default=DIGEST_MAX_PER_FEED)
     return parser
 
 
@@ -192,6 +202,27 @@ def cmd_digest(args) -> int:
     return 0
 
 
+def cmd_check(args) -> int:
+    """
+    Teste chaque source du digest et affiche le diagnostic.
+
+    Args:
+        args (argparse.Namespace): Arguments de la sous-commande check.
+
+    Returns:
+        int: 0 si au moins une source répond, 1 sinon.
+    """
+    sources, skipped = build_digest_sources(args.skip)
+    if args.only:
+        keep = lambda name: any(o.lower() in name.lower() for o in args.only)  # noqa: E731
+        sources = [s for s in sources if keep(s.name)]
+        skipped = [s for s in skipped if keep(s)]
+    rows = check_sources(sources, skipped, args.since_days, args.max,
+                         progress=lambda n: print(f"… {n}", file=sys.stderr))
+    print(format_check(rows))
+    return 0 if any(r["count"] for r in rows) else 1
+
+
 def main(argv=None) -> int:
     """
     Point d'entrée CLI.
@@ -207,6 +238,8 @@ def main(argv=None) -> int:
         return cmd_run(args)
     if args.command == "digest":
         return cmd_digest(args)
+    if args.command == "check":
+        return cmd_check(args)
     topics = tp.load_topics(TOPICS_FILE)
     if args.command == "add":
         topic = tp.make_topic(args.name, args.alias, args.exclude, args.lang)

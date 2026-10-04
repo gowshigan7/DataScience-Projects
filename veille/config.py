@@ -240,6 +240,58 @@ MANUAL_LINKS = [
     {"label": "Artificial Analysis", "url": "https://artificialanalysis.ai/"},
 ]
 
-DIGEST_SOURCE_KINDS = ["feeds", "github", "hf_papers", "hacker_news", "reddit", "mail", "grok"]
+DIGEST_SOURCE_KINDS = ["feeds", "github", "hf_papers", "hacker_news", "reddit", "browser", "mail", "grok"]
 FEED_SUMMARY_MAX_CHARS = 400              # Résumés tronqués (notes de release, abstracts)
 ISO_DATE_FORMAT = "%Y-%m-%d"
+
+# ---------------------------------------------------------------------------
+# Bot navigateur (Playwright) — sites sans flux ou qui bloquent les requêtes simples
+# ---------------------------------------------------------------------------
+
+BROWSER_EXECUTABLE_PATH = os.environ.get("VEILLE_BROWSER_PATH", "") or None  # None = Chromium de Playwright
+BROWSER_TIMEOUT_MS = 30000
+BROWSER_SETTLE_MS = 1500                  # Attente après chargement (sites en JavaScript)
+BROWSER_MIN_TITLE_CHARS = 12              # Liens plus courts ignorés (menus, boutons)
+BROWSER_MAX_TITLE_CHARS = 200
+BROWSER_PREFERRED_TITLE_CHARS = 25      # Ligne ≥ 25 car. = titre probable (vs « News », date…)
+BROWSER_USER_AGENT = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+                      "(KHTML, like Gecko) Chrome/140.0 Safari/537.36")
+
+# Pages lues par le navigateur : liens dont l'URL correspond à link_pattern (regex).
+BROWSER_PAGES = [
+    {"name": "Anthropic", "group": GROUP_LABS, "url": "https://www.anthropic.com/news",
+     "link_pattern": r"anthropic\.com/news/[^/?#]+$"},
+    {"name": "xAI", "group": GROUP_LABS, "url": "https://x.ai/news",
+     "link_pattern": r"x\.ai/news/[^/?#]+$"},
+    {"name": "Meta AI", "group": GROUP_LABS, "url": "https://ai.meta.com/blog/",
+     "link_pattern": r"ai\.meta\.com/blog/[^/?#]+/?$"},
+    {"name": "Mistral AI", "group": GROUP_LABS, "url": "https://mistral.ai/news",
+     "link_pattern": r"mistral\.ai/news/[^/?#]+$"},
+    {"name": "Qwen", "group": GROUP_LABS, "url": "https://qwenlm.github.io/blog/",
+     "link_pattern": r"qwenlm\.github\.io/blog/[^/?#]+/?$"},
+    {"name": "Cursor changelog", "group": GROUP_RELEASES, "url": "https://cursor.com/changelog",
+     "link_pattern": r"cursor\.com/changelog/[^/?#]+$"},
+]
+
+# Secours navigateur des flux RSS : page HTML à lire si le flux échoue ou est vide.
+FEED_BROWSER_FALLBACKS = {
+    "OpenAI": {"url": "https://openai.com/news/", "link_pattern": r"openai\.com/index/[^/?#]+/?$"},
+    "Google DeepMind": {"url": "https://deepmind.google/discover/blog/",
+                        "link_pattern": r"deepmind\.google/discover/blog/[^/?#]+/?$"},
+    "Hugging Face": {"url": "https://huggingface.co/blog",
+                     "link_pattern": r"huggingface\.co/blog/[^/?#]+$"},
+}
+REDDIT_BROWSER_URL = "https://old.reddit.com/r/{sub}/top/?t={period}"
+REDDIT_BROWSER_LINK_PATTERN = r"reddit\.com/r/{sub}/comments/"
+
+# ---------------------------------------------------------------------------
+# Diagnostic des sources (commande « check »)
+# ---------------------------------------------------------------------------
+
+CHECK_SAMPLE_CHARS = 60
+CHECK_ERROR_CHARS = 140
+CHECK_DEFAULT_SINCE_DAYS = 7
+CHECK_STATUS_OK = "OK"
+CHECK_STATUS_EMPTY = "VIDE"
+CHECK_STATUS_ERROR = "ERREUR"
+CHECK_STATUS_SKIPPED = "NON CONFIGURÉ"

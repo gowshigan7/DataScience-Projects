@@ -239,9 +239,9 @@ def test_grok_falls_back_to_citations(monkeypatch):
 def test_registry_skips_unconfigured(monkeypatch):
     monkeypatch.setattr(MailboxSource, "is_configured", lambda self: False)
     monkeypatch.setattr(GrokXSource, "is_configured", lambda self: False)
-    sources, skipped = build_digest_sources()
+    sources, skipped = build_digest_sources(skip=["browser"])
     assert len(skipped) == 2 and sources
-    only, _ = build_digest_sources(skip=["feeds", "github", "reddit", "mail", "grok"])
+    only, _ = build_digest_sources(skip=["feeds", "github", "reddit", "browser", "mail", "grok"])
     assert {s.name for s in only} == {"hf_papers", "hacker_news_top"}
 
 
