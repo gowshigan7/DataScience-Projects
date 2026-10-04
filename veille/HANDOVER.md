@@ -1,6 +1,6 @@
 # Handover — `veille/` (tests sur machine locale)
 
-Branche : `ccr-20c118e9-jyqcbi` · dernier commit : `b1e300c`
+Branche : `ccr-20c118e9-jyqcbi` · dernier commit de code : `b1e300c`
 Contexte : développé dans une session cloud dont le réseau bloquait presque tous les sites.
 **Aucune source réelle n'a pu être validée, sauf le flux Microsoft Research (10 articles OK).**
 Le but de cette étape : faire tourner l'app sur une vraie connexion et corriger ce qui casse.
@@ -99,7 +99,7 @@ commits `feat:` / `fix:` …
 1. Corriger les sources KO d'après la sortie de `check`.
 2. Résumé automatique du digest par un LLM (ex. « les 5 infos du jour »).
 3. Planification quotidienne (cron / Planificateur de tâches) + envoi du rapport par e-mail.
-4. Ouvrir une PR une fois les sources validées (diff actuel ≈ 3 000 lignes : à découper si besoin).
+4. Ouvrir une PR une fois les sources validées (diff actuel ≈ 4 300 lignes, exemples compris : à découper si besoin).
 
 ## Prompt de reprise (Claude Code sur la machine locale)
 
