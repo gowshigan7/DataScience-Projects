@@ -1,6 +1,6 @@
 # Draft ontology for Hermes <-> restaurant_scraper integration.
 # Classes have properties; relations are (subject, predicate, object).
-version: 0.1
+version: 0.2
 
 classes:
   # --- monitoring layer (maps to ~/.hermes state) ---
@@ -16,6 +16,13 @@ classes:
   PriceLevel: {props: [level]}      # 0-4
   Location:   {props: [lat, lon, label]}
 
+  # --- village layer (visual twin, after Nexus Village) ---
+  Resident: {props: [name, species, persona, home, state],   states: [working, idle, sleeping, waiting]}
+  Building: {props: [name, kind, status, uptime_s],           states: [up, down, error]}
+  Link:     {props: [from, to, bead_color, last_hour_counts]}
+  Case:     {props: [id, role, status, needs_decision],       roles: [investigator, executor, verifier]}
+  Soul:     {props: [memories, mood, affinity],               note: "affinity: {resident: -1..1}"}
+
 relations:
   - [Trigger,    starts,      Run]
   - [Run,        calls,       ToolCall]
@@ -26,6 +33,15 @@ relations:
   - [Restaurant, serves,      Cuisine]
   - [Restaurant, priced_at,   PriceLevel]
   - [Restaurant, located_at,  Location]
+
+  # village bindings: every visual must point at real state
+  - [Resident,   embodies,    Trigger]      # a Hermes cron job / agent
+  - [Resident,   performs,    Run]          # state=working while Run is open
+  - [Building,   hosts,       ToolCall]     # service the tool hits (OSM, Google Places)
+  - [Link,       carries,     ToolCall]     # bead per call, coloured by ok/fail
+  - [Case,       tracks,      Run]          # multi-agent investigation
+  - [Resident,   has,         Soul]
+  - [Soul,       feels_about, Resident]
 
 health_checks:   # alert on the first missing link in the chain
   - "every Trigger has a Run within 5 min"

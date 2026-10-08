@@ -2,9 +2,32 @@
 
 Exploratory branch for wiring our projects (starting with `restaurant_scraper`)
 into our **Hermes agent** (Nous Research). Inspired by an r/hermesagent post
-(https://www.reddit.com/r/hermesagent/s/rQoulVVXAA). Reddit can't be reached
-from the build container, so this plan is our own take. Update it once we
-compare notes with the post.
+(https://www.reddit.com/r/hermesagent/s/rQoulVVXAA) about
+[Nexus Village](https://kanzie.com/#builds) by Christian Nilsson.
+
+## 0. What Nexus Village does (our reference)
+
+Nexus is a self-hosted personal AI operations system that Hermes orchestrates.
+The **Village** ([live demo](https://kanzie.com/nexus/village/index.html)) is a
+3D felt-toy diorama of the server, a monitoring dashboard disguised as a game:
+
+| Village thing | Real system state |
+|---|---|
+| Animal resident (e.g. Nora the fox) | A Hermes agent or cron job. It walks to work while its job runs, and naps near home or sleeps at night when idle |
+| Building / hotel room | A service or website: lit when up, dim at night, red on error, with an uptime label |
+| Cables with coloured beads | Network traffic and events between services, plus a last-hour sparkline |
+| Robots (investigator / executor / verifier) | Helper agents working a "case". A robot at the notice board means a plan needs your decision |
+| Worker robot in a hard hat | A background job with no owner. It counts down and pops into confetti when done |
+| Workshop and gnomes | CI/CD: the release being built, deliveries by parachute, a town crier on release day |
+| Fireworks | A test suite passing |
+| "Souls" | Each resident has a personality, memories and feelings about others (a relationship graph), reflects nightly, and spreads rumours |
+
+From its client code, the frontend reads a live stream at
+`/api/village/stream?links=1`. It also calls `/api/village/souls/graph`
+(the relationship web), `/api/village/souls/bench`,
+`/api/village/speak/reflect` and `/api/village/resolve?case=…`.
+That means: **backend = a state reducer over Hermes data → event stream;
+frontend = a pure renderer.** We copy that split.
 
 ## 1. Monitoring
 
@@ -36,11 +59,29 @@ Trigger ─starts─▶ Run ─calls─▶ ToolCall ─produces─▶ Artifact �
 - **Monitoring classes:** Trigger, Run, ToolCall, Artifact and Delivery. Each
   maps to a Hermes file (a cron job, a session, the tool log, cron output or
   deliveries.db).
+- **Village classes:** Resident, Building, Link, Case and Soul, the visual
+  layer. Each is *bound to* a monitoring class, so the picture can't drift
+  from the truth ("truthful robots").
 - **Domain classes:** Restaurant, Cuisine, PriceLevel and Location. These
   mirror the standard dict in `scraper/base_scraper.py`, so a scraper result
   maps 1:1 onto ontology instances.
 
-## 3. Fun
+## 3. Fun: our own mini-village
+
+The same split, at our scale:
+
+1. **`village_state.py` (backend):** reads `~/.hermes/` (cron jobs,
+   sessions, logs) plus scraper JSONL events. It emits one `VillageSnapshot`
+   JSON (residents, buildings, links, cases) in the shape of the ontology below.
+2. **Renderer:** start with a terminal or 2D HTML page, and maybe three.js
+   later. Residents = Hermes jobs, buildings = our services (the scraper, the
+   OSM and Google Places backends).
+3. **Souls-lite:** each resident has a `SOUL.md`-style persona (Hermes
+   profiles already have `SOUL.md`) plus an affinity score per resident pair.
+   It goes up when they collaborate (share a Run) and nudges the chatter
+   lines.
+
+Restaurant-flavoured ideas:
 
 - **Hermes skill `restaurant-scout`** (`skills/restaurant-scout/SKILL.md`):
   "find me 4★+ italian near X". It calls
@@ -53,7 +94,9 @@ Trigger ─starts─▶ Run ─calls─▶ ToolCall ─produces─▶ Artifact �
 
 ## Next steps
 
-- [ ] Read the Reddit post together and adjust this plan
+- [x] Study the Nexus Village reference (above)
+- [ ] Decide on a renderer (TUI vs. HTML vs. three.js)
+- [ ] Write `village_state.py`: Hermes state → `VillageSnapshot` JSON
 - [ ] Add a `--format json` path that is stable for agent use (already exists,
       but needs verifying)
 - [ ] Write the `restaurant-scout` skill
