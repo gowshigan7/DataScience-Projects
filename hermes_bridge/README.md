@@ -5,6 +5,44 @@ into our **Hermes agent** (Nous Research). Inspired by an r/hermesagent post
 (https://www.reddit.com/r/hermesagent/s/rQoulVVXAA) about
 [Nexus Village](https://kanzie.com/#builds) by Christian Nilsson.
 
+## Quick start: the terminal village
+
+```bash
+python -m hermes_bridge.main --demo            # simulated Hermes, no install needed
+python -m hermes_bridge.main                   # your real ~/.hermes (read-only)
+python -m hermes_bridge.main --watch 5         # live, redraws every 5 s
+python -m hermes_bridge.main --json            # VillageSnapshot for the 3D step
+pytest hermes_bridge/tests/ -v
+```
+
+```
+ ☀  Hermes Village — 16:54    2 working · 1 idle · 1 sleeping · 1 trouble
+ 🏛  BUILDINGS
+   🟢 Gateway          running · 2 agents
+   🔴 Discord          retrying: invalid token
+ 🐾 RESIDENTS
+   🦊 Fennel     mail-digest            ⚒  working   @default
+   🦡 Bruno      restaurant-scout       🔥 trouble   @default  (Overpass API timeout)
+   🦦 Ottilie    nightly-tests          💤 sleeping  @coder
+ 💬 Tilda: anyone up for boule by the pond?
+```
+
+How the mapping works:
+
+- **Each cron job becomes a resident.** Jobs come from `cron/jobs.json` and
+  `profiles/*/cron/jobs.json`. A resident's state is one of:
+  - **working:** the job ran in the last 5 minutes;
+  - **trouble:** `last_status == "error"`;
+  - **sleeping:** the job is paused, or it's night;
+  - **idle:** none of the above.
+- **The gateway and each chat platform become buildings.** These come from
+  `gateway_state.json`.
+- **Field names come from the hermes-agent source.** Everything lives in
+  `config.py`.
+
+Files: `village_state.py` (backend, pure mapping), `village_tui.py`
+(terminal frontend), `demo_data.py`, `main.py` (CLI).
+
 ## 0. What Nexus Village does (our reference)
 
 Nexus is a self-hosted personal AI operations system that Hermes orchestrates.
@@ -95,8 +133,11 @@ Restaurant-flavoured ideas:
 ## Next steps
 
 - [x] Study the Nexus Village reference (above)
-- [ ] Decide on a renderer (TUI vs. HTML vs. three.js)
-- [ ] Write `village_state.py`: Hermes state → `VillageSnapshot` JSON
+- [x] Decide on a renderer: terminal first, then three.js
+- [x] Write `village_state.py`: Hermes state → `VillageSnapshot` JSON
+- [x] Build the terminal village (`village_tui.py`)
+- [ ] Build the 3D village (three.js) on top of `--json`
+- [ ] Add Case/robots (kanban) and Souls-lite
 - [ ] Add a `--format json` path that is stable for agent use (already exists,
       but needs verifying)
 - [ ] Write the `restaurant-scout` skill
