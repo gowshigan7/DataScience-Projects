@@ -1,0 +1,34 @@
+# Draft ontology for Hermes <-> restaurant_scraper integration.
+# Classes have properties; relations are (subject, predicate, object).
+version: 0.1
+
+classes:
+  # --- monitoring layer (maps to ~/.hermes state) ---
+  Trigger:   {props: [id, kind, scheduled_at],  source: "cron/jobs.json | chat message | webhook"}
+  Run:       {props: [id, started_at, ended_at, status, tokens, cost], source: "state.db / sessions/*.json"}
+  ToolCall:  {props: [id, tool, args, duration_ms, ok], source: "logs/*.log"}
+  Artifact:  {props: [id, format, path, n_items],      source: "cron/output/"}
+  Delivery:  {props: [id, channel, delivered_at, ok],  source: "cron/deliveries.db"}
+
+  # --- domain layer (mirrors BaseScraper.make_restaurant) ---
+  Restaurant: {props: [name, address, lat, lon, rating, price_level, cuisine, open_now, source]}
+  Cuisine:    {props: [label]}
+  PriceLevel: {props: [level]}      # 0-4
+  Location:   {props: [lat, lon, label]}
+
+relations:
+  - [Trigger,    starts,      Run]
+  - [Run,        calls,       ToolCall]
+  - [ToolCall,   produces,    Artifact]
+  - [Artifact,   sent_via,    Delivery]
+  - [Artifact,   describes,   Restaurant]
+  - [Run,        about,       Location]
+  - [Restaurant, serves,      Cuisine]
+  - [Restaurant, priced_at,   PriceLevel]
+  - [Restaurant, located_at,  Location]
+
+health_checks:   # alert on the first missing link in the chain
+  - "every Trigger has a Run within 5 min"
+  - "every Run has >= 1 ToolCall with ok=true"
+  - "every successful Run produces an Artifact with n_items > 0"
+  - "every Artifact has a Delivery with ok=true"
