@@ -51,3 +51,7 @@ export GOOGLE_PLACES_API_KEY="your_key"   # optional — OSM fallback works with
 3. Export it from `filters/__init__.py`.
 4. Add the CLI flag in `main.py`.
 5. Add tests in `tests/test_filters.py`.
+
+## Other projects
+
+- `pdf_merger/` — Windows PDF merger (Tkinter + pypdf). Tests: `pytest pdf_merger/tests/ -v`. See `pdf_merger/README.md`.
